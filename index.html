@@ -114,17 +114,6 @@
         .welcome-icon { font-size: 60px; margin-bottom: 20px; }
         .welcome h2 { margin-bottom: 15px; color: #333; }
         .welcome p { margin-bottom: 20px; color: #666; font-size: 14px; }
-        .api-setup { 
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 20px;
-            font-size: 12px;
-            color: #856404;
-            text-align: left;
-        }
-        .api-setup strong { display: block; margin-bottom: 10px; }
         .mood-btns {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -171,23 +160,14 @@
     <div class="container">
         <div class="header">
             <h1>🩵 Serenify</h1>
-            <p>Your Mental Wellness Companion (AI Powered)</p>
+            <p>Your AI Mental Wellness Companion</p>
         </div>
 
         <div id="welcome" class="welcome messages">
             <div class="welcome-icon">🩵</div>
             <h2>Hi there, I'm Serenify 💛</h2>
             <p>Your AI-powered mental wellness companion. I'm here 24/7 to listen, support, and help you through stress, anxiety, loneliness, and more.</p>
-            
-            <div class="api-setup">
-                <strong>⚙️ AI Setup:</strong>
-                To enable AI responses, you need to add your Google Gemini API key to the code:<br><br>
-                1. Get free key: <strong>https://ai.google.dev/</strong><br>
-                2. Find: <strong>const GEMINI_API_KEY = ""</strong><br>
-                3. Paste your key inside the quotes<br><br>
-                Without it, you'll get limited responses.
-            </div>
-
+            <p style="font-size: 12px; color: #999;">Powered by Google Gemini AI</p>
             <div class="mood-btns">
                 <button class="mood-btn" onclick="startChat('😊 Good')">😊 Good</button>
                 <button class="mood-btn" onclick="startChat('😐 Okay')">😐 Okay</button>
@@ -206,72 +186,10 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai"></script>
     <script>
-        // ⭐ ADD YOUR GOOGLE GEMINI API KEY HERE ⭐
-        const GEMINI_API_KEY = "AIzaSyBMovICsGlAexYvUebISXGumwlNiCjztoQ"; // Leave empty to use fallback responses
-
-        let useAI = GEMINI_API_KEY.length > 0;
-        let genAI = null;
-        let model = null;
-
-        if (useAI) {
-            try {
-                genAI = new google.generativeai.GoogleGenerativeAI(GEMINI_API_KEY);
-                model = genAI.getGenerativeModel({ model: "gemini-pro" });
-            } catch (e) {
-                useAI = false;
-                console.warn("AI setup issue, using fallback");
-            }
-        }
-
-        // Fallback responses
-        const fallbackKeywords = {
-            hello: ["Hello! How can I help you today? 💛", "Hi there! I'm here to listen 💙"],
-            stress: ["That sounds stressful 💙 Want a breathing exercise?", "Stress is real. Let's work through this 💛"],
-            anxiety: ["Anxiety is tough. You're brave 💙 Want to ground yourself?"],
-            sad: ["I'm sorry you're feeling this way 💔 I'm here with you 💙"],
-            lonely: ["Loneliness hurts, but you're not alone 💙 I'm here"],
-            tired: ["You deserve rest 😌 Take a break - you've earned it 💛"],
-            help: ["I'm here for you! 💙 You can ask about:\n• Breathing exercises\n• Calming techniques\n• Journaling prompts\n• Just to listen"],
-            breathing: ["Let's breathe together 🌿\n\n1. Inhale for 4 seconds\n2. Hold for 3 seconds\n3. Exhale for 5 seconds\n\nRepeat 3 times 💛"],
-            thank: ["You're welcome! 💛 Anything else?"],
-            bye: ["Goodbye! Remember, I'm here 24/7 💛"],
-        };
-
-        async function getAIResponse(userMessage) {
-            if (!useAI || !model) return null;
-
-            try {
-                const systemPrompt = `You are Serenify, a compassionate mental wellness chatbot. Respond warmly like a caring friend. Use emojis naturally. Keep responses concise. If someone mentions self-harm or suicide, share India crisis helplines: AASRA (91-9820466726), Vandrevala (1860 266 2345), iCall (9152987821), Emergency (112). Never pretend to be a doctor.`;
-                
-                const fullPrompt = systemPrompt + "\n\nUser: " + userMessage + "\n\nSerenify:";
-                
-                const result = await model.generateContent(fullPrompt);
-                const response = await result.response;
-                return response.text();
-            } catch (error) {
-                console.error("AI Error:", error);
-                return null;
-            }
-        }
-
-        function getFallbackResponse(text) {
-            const lower = text.toLowerCase();
-            
-            // Crisis check
-            if (["suicide", "kill", "self harm", "die", "end it"].some(w => lower.includes(w))) {
-                return "🚨 I'm so sorry you're feeling this way 💙\n\n🇮🇳 CRISIS HELPLINES:\n• AASRA: 91-9820466726\n• Vandrevala: 1860 266 2345\n• iCall: 9152987821\n• Emergency: 112\n\nYour life matters. Please reach out 💛";
-            }
-            
-            for (const [key, responses] of Object.entries(fallbackKeywords)) {
-                if (lower.includes(key)) {
-                    return responses[Math.floor(Math.random() * responses.length)];
-                }
-            }
-            
-            return "I hear you 💙 Your feelings matter. Tell me more about what you're experiencing 💛";
-        }
+        // ⭐ CHANGE THIS TO YOUR RENDER BACKEND URL ⭐
+        // Example: https://serenify-backend.onrender.com/chat
+        const BACKEND_URL = "https://serenify-backend-x3u9.onrender.com";
 
         function startChat(mood) {
             document.getElementById('welcome').style.display = 'none';
@@ -314,6 +232,10 @@
             const text = input.value.trim();
             
             if (!text) return;
+            if (BACKEND_URL.includes("YOUR-RENDER-PROJECT-NAME")) {
+                alert("❌ Please update BACKEND_URL in the code with your Render project URL!");
+                return;
+            }
             
             input.disabled = true;
             sendBtn.disabled = true;
@@ -323,20 +245,28 @@
             
             showTyping();
             
-            let response;
-            
-            if (useAI) {
-                // Try AI first
-                response = await getAIResponse(text);
+            try {
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: text })
+                });
+
+                const data = await response.json();
+                removeTyping();
+
+                if (data.success) {
+                    addMessage(data.reply, 'bot');
+                } else {
+                    addMessage(`Sorry, something went wrong: ${data.error}`, 'bot');
+                }
+            } catch (error) {
+                removeTyping();
+                addMessage("Connection error. Please try again later 💙", 'bot');
+                console.error("Error:", error);
             }
-            
-            // Fallback if AI fails or not enabled
-            if (!response) {
-                response = getFallbackResponse(text);
-            }
-            
-            removeTyping();
-            addMessage(response, 'bot');
             
             input.disabled = false;
             sendBtn.disabled = false;
