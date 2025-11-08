@@ -11,6 +11,13 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         :root {
             --primary-color: #7B68EE;
             --secondary-color: #87CEEB;
@@ -23,62 +30,65 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #F0E6FA 0%, #E3F2FD 100%);
-            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 10px;
+            overflow: hidden;
         }
 
         .container {
             width: 100%;
             max-width: 500px;
-            height: 90vh;
-            max-height: 700px;
+            height: 100vh;
+            max-height: 800px;
             background: var(--white);
             border-radius: 20px;
             box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
 
         /* Header */
         .header {
             background: linear-gradient(135deg, #7B68EE 0%, #87CEEB 100%);
             color: var(--white);
-            padding: 20px;
+            padding: 15px 20px;
             text-align: center;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+            z-index: 10;
         }
 
         .header h1 {
-            font-size: 24px;
-            margin: 10px 0;
+            font-size: 22px;
+            margin: 5px 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .header p {
-            font-size: 13px;
+            font-size: 12px;
             opacity: 0.95;
-            margin: 5px 0;
+            margin: 3px 0;
         }
 
         .status {
-            font-size: 12px;
+            font-size: 11px;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 5px;
-            margin-top: 8px;
+            margin-top: 5px;
         }
 
         .status-dot {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             background: #4CAF50;
             border-radius: 50%;
             animation: pulse 2s infinite;
@@ -95,15 +105,18 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px 20px;
+            padding: 30px 20px;
             text-align: center;
             flex: 1;
             background: linear-gradient(135deg, #F0E6FA 0%, #E3F2FD 100%);
+            overflow-y: auto;
+            width: 100%;
+            height: 100%;
         }
 
         .welcome-icon {
-            font-size: 60px;
-            margin-bottom: 20px;
+            font-size: 50px;
+            margin-bottom: 15px;
             animation: float 3s ease-in-out infinite;
         }
 
@@ -113,28 +126,28 @@
         }
 
         .welcome-screen h2 {
-            font-size: 28px;
+            font-size: 24px;
             color: var(--dark-text);
             margin-bottom: 10px;
         }
 
         .welcome-screen p {
-            font-size: 16px;
+            font-size: 14px;
             color: #666;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             line-height: 1.5;
         }
 
         .mood-buttons {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             width: 100%;
         }
 
         .mood-btn {
-            padding: 12px 8px;
+            padding: 12px 10px;
             background: var(--accent-color);
             border: 2px solid #DDD;
             border-radius: 12px;
@@ -149,24 +162,29 @@
             border-color: var(--primary-color);
             background: var(--light-purple);
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(123, 104, 238, 0.3);
         }
 
         /* Chat Area */
-        .chat-container {
+        .chat-wrapper {
             flex: 1;
             display: flex;
             flex-direction: column;
+            width: 100%;
+            height: 100%;
+            min-height: 0;
             background: var(--white);
         }
 
         .messages {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            -webkit-overflow-scrolling: touch;
+            padding: 15px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
+            width: 100%;
+            min-height: 0;
         }
 
         .message {
@@ -194,12 +212,13 @@
         }
 
         .message-bubble {
-            max-width: 70%;
-            padding: 12px 16px;
+            max-width: 75%;
+            padding: 10px 14px;
             border-radius: 15px;
-            font-size: 14px;
-            line-height: 1.5;
+            font-size: 13px;
+            line-height: 1.4;
             word-wrap: break-word;
+            white-space: pre-wrap;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
@@ -216,20 +235,25 @@
         }
 
         .message-time {
-            font-size: 11px;
+            font-size: 10px;
             opacity: 0.6;
-            margin-top: 5px;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .message.bot .message-time {
+            text-align: left;
         }
 
         .typing {
             display: flex;
             gap: 4px;
-            padding: 10px;
+            padding: 8px;
         }
 
         .typing-dot {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             background: #999;
             border-radius: 50%;
             animation: typing 1.4s infinite;
@@ -245,24 +269,26 @@
 
         @keyframes typing {
             0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
-            30% { opacity: 1; transform: translateY(-10px); }
+            30% { opacity: 1; transform: translateY(-8px); }
         }
 
         /* Input Area */
         .input-area {
-            padding: 15px;
+            padding: 12px 15px;
             border-top: 1px solid #EEE;
             display: flex;
             gap: 10px;
             background: var(--white);
+            flex-shrink: 0;
+            z-index: 5;
         }
 
         .input-field {
             flex: 1;
-            padding: 12px 15px;
+            padding: 10px 12px;
             border: 2px solid #DDD;
-            border-radius: 25px;
-            font-size: 14px;
+            border-radius: 20px;
+            font-size: 13px;
             font-family: inherit;
             transition: border-color 0.3s;
         }
@@ -273,53 +299,65 @@
             box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.1);
         }
 
+        .input-field:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+        }
+
         .send-btn {
-            padding: 12px 20px;
+            padding: 10px 16px;
             background: var(--primary-color);
             color: var(--white);
             border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 14px;
-        }
-
-        .send-btn:hover {
-            background: #6A5FDB;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(123, 104, 238, 0.4);
-        }
-
-        .send-btn:active {
-            transform: translateY(0);
-        }
-
-        /* Quick Actions */
-        .quick-actions {
-            display: flex;
-            gap: 8px;
-            padding: 0 20px 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .action-btn {
-            padding: 8px 15px;
-            background: var(--accent-color);
-            border: 2px solid #DDD;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 12px;
             font-weight: 600;
-            color: var(--primary-color);
             transition: all 0.3s;
+            font-size: 13px;
+            flex-shrink: 0;
         }
 
-        .action-btn:hover {
-            background: var(--light-purple);
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
+        .send-btn:hover:not(:disabled) {
+            background: #6A5FDB;
+        }
+
+        .send-btn:disabled {
+            background: #CCC;
+            cursor: not-allowed;
+        }
+
+        .send-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .error-message {
+            background: #FFE5E5;
+            color: #C33;
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 12px;
+            margin: 10px;
+            border: 1px solid #FF9999;
+        }
+
+        /* Scrollbar Styling */
+        .messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .messages::-webkit-scrollbar-track {
+            background: #F5F5F5;
+            border-radius: 10px;
+        }
+
+        .messages::-webkit-scrollbar-thumb {
+            background: #DDD;
+            border-radius: 10px;
+        }
+
+        .messages::-webkit-scrollbar-thumb:hover {
+            background: #999;
         }
 
         /* Mobile Responsive */
@@ -327,37 +365,31 @@
             .container {
                 max-height: 100vh;
                 border-radius: 0;
+                max-width: 100%;
             }
 
             .message-bubble {
                 max-width: 85%;
+                font-size: 12px;
             }
 
             .header h1 {
-                font-size: 20px;
+                font-size: 18px;
             }
 
             .mood-buttons {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
             }
-        }
 
-        /* Scrollbar Styling */
-        .messages::-webkit-scrollbar {
-            width: 6px;
-        }
+            .mood-btn {
+                padding: 10px 8px;
+                font-size: 11px;
+            }
 
-        .messages::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .messages::-webkit-scrollbar-thumb {
-            background: #DDD;
-            border-radius: 3px;
-        }
-
-        .messages::-webkit-scrollbar-thumb:hover {
-            background: #AAA;
+            .input-field {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -378,8 +410,8 @@
             <div class="welcome-icon">🩵</div>
             <h2>Hi there, I'm Serenify 💛</h2>
             <p>Your mental wellness companion. You can talk to me about anything that's on your mind — stress, anxiety, overthinking, or just how your day's been.</p>
-            <p style="font-size: 14px; color: #888;">I'm here 24/7 to listen, calm, and support you</p>
-            <div style="margin-top: 20px; font-weight: 600; color: #666; margin-bottom: 20px;">So, how are you feeling today?</div>
+            <p style="font-size: 12px; color: #888;">I'm here 24/7 to listen, calm, and support you</p>
+            <div style="margin-top: 15px; font-weight: 600; color: #666; margin-bottom: 15px; font-size: 13px;">So, how are you feeling today?</div>
             <div class="mood-buttons">
                 <button class="mood-btn" onclick="selectMood('😊 Good')">😊 Good</button>
                 <button class="mood-btn" onclick="selectMood('😐 Okay')">😐 Okay</button>
@@ -391,7 +423,7 @@
         </div>
 
         <!-- Chat Area (initially hidden) -->
-        <div class="chat-container" id="chatContainer" style="display: none;">
+        <div class="chat-wrapper" id="chatContainer" style="display: none;">
             <div class="messages" id="messages"></div>
         </div>
 
@@ -404,87 +436,88 @@
                 placeholder="Type your message..."
                 onkeypress="if(event.key === 'Enter') sendMessage()"
             >
-            <button class="send-btn" onclick="sendMessage()">Send</button>
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai@0.1.3/dist/index.min.js"></script>
     <script>
-        // Serenify Chatbot Logic
+        // 🔴 IMPORTANT: ADD YOUR GOOGLE GEMINI API KEY HERE
+        // Get it from: https://ai.google.dev/
+        const API_KEY = "AIzaSyCao_g9mTv1wmQSR8QVHG2UfC11_ZVo5HY"; // Replace with your actual API key
+
         let messages = [];
         let currentMood = null;
+        let conversationHistory = [];
 
-        const responses = {
-            greetings: {
-                patterns: ['hi', 'hello', 'hey', 'greetings', 'good morning', 'good afternoon', 'good evening'],
-                responses: [
-                    'Hello! How can I assist you today? 💛',
-                    'Hi there! What can I help you with?',
-                    'Hey! I\'m here to help. What do you need?'
-                ]
-            },
-            stressed: {
-                patterns: ['stress', 'stressed', 'pressure', 'overwhelm', 'overwhelmed', 'anxious', 'anxiety', 'worried', 'nervous'],
-                responses: [
-                    'That sounds really stressful 💙 You\'re not alone — many people feel overwhelmed sometimes. Would you like to try a calming breathing exercise?',
-                    'Stress can feel so heavy. Your feelings are completely valid. I\'m here with you 💛'
-                ]
-            },
-            sad: {
-                patterns: ['sad', 'depressed', 'down', 'unhappy', 'miserable', 'lonely', 'alone'],
-                responses: [
-                    'I\'m sorry you\'re feeling this way 💔 It\'s okay to not be okay. I\'m here with you. Would you like to talk about it?',
-                    'Loneliness can hurt so much 💙 Please know that your feelings matter. I\'m here, and I care.'
-                ]
-            },
-            breathing: {
-                patterns: ['breath', 'breathing', 'relax', 'calm', 'exercise', 'exercise'],
-                responses: [
-                    'Let\'s do a calming breathing exercise together 🌿\n\n👉 Breathe in slowly for 4 seconds...\n👉 Hold for 3 seconds...\n👉 Breathe out gently for 5 seconds...\n\nLet\'s repeat this 3 times. Take your time. I\'m here with you 💛\n\nHow do you feel now?'
-                ]
-            },
-            journaling: {
-                patterns: ['journal', 'write', 'reflect', 'thought'],
-                responses: [
-                    'Journaling can be really therapeutic 📝 Here are some prompts:\n\n• What\'s something small that went right today?\n• What are three things you\'re grateful for?\n• If you could tell yourself one thing, what would it be?\n\nTake your time. Writing helps 💛'
-                ]
-            },
-            affirmation: {
-                patterns: ['affirmation', 'motivation', 'encouragement', 'positive'],
-                responses: [
-                    'You are stronger than you think 💪',
-                    'It\'s okay to not be okay. You\'re doing your best 💛',
-                    'Your feelings are valid, and you deserve support 🩵',
-                    'One step at a time. You\'ve got this 🌟',
-                    'You are worthy of love, rest, and kindness 💚'
-                ]
-            },
-            selfcare: {
-                patterns: ['tired', 'exhausted', 'burnout', 'drained', 'help', 'support', 'care'],
-                responses: [
-                    'You deserve rest 😌 Here are some gentle self-care ideas:\n\n• Take a 5-minute stretch break 🧘\n• Drink some water 💧\n• Step outside for fresh air 🌿\n• Listen to calming music 🎵\n• Rest guilt-free\n\nYou\'ve been doing great. Take care of yourself 💛'
-                ]
-            },
-            thank: {
-                patterns: ['thank', 'thanks', 'appreciate', 'grateful'],
-                responses: [
-                    'You\'re welcome! Is there anything else I can help with? 💛',
-                    'Happy to help! Let me know if you need anything else 💙'
-                ]
-            },
-            goodbye: {
-                patterns: ['bye', 'goodbye', 'see you', 'farewell'],
-                responses: [
-                    'Goodbye! Feel free to come back anytime you need me 💛',
-                    'See you later! Remember, I\'m here 24/7 whenever you need support 🩵'
-                ]
-            },
-            crisis: {
-                patterns: ['suicide', 'kill myself', 'self harm', 'cut myself', 'want to die', 'end it all', 'no point', 'better off dead'],
-                responses: [
-                    '🚨 I\'m really sorry you\'re feeling like this 💙\n\nYou\'re not alone — help is available 24/7:\n\n🇮🇳 INDIA HELPLINES:\n• AASRA: 91-9820466726\n• Vandrevala: 1860 266 2345\n• iCall: 9152987821\n• National: 112\n\nPlease reach out to someone you trust or call one of these numbers. Your life matters 🩵\n\nI\'m here, but trained professionals can help right now.'
-                ]
+        // System prompt for Serenify personality
+        const SYSTEM_PROMPT = `You are Serenify, a compassionate mental wellness companion designed to support students and young professionals.
+
+Your core values:
+- Listen with empathy and without judgment
+- Respond like a caring friend, not a robot
+- Validate feelings before offering suggestions
+- Be warm, genuine, and supportive
+- Use emojis naturally (💛, 🩵, 💙, 🌿)
+- Keep responses concise and easy to read when someone is stressed
+- Never pretend to be a doctor or therapist
+- Always respect the person's autonomy
+
+When someone expresses mental health struggles:
+- Acknowledge their feelings with genuine empathy
+- Offer practical support (breathing exercises, journaling, self-care)
+- If they mention self-harm or suicide, immediately share crisis helplines:
+  AASRA: 91-9820466726, Vandrevala: 1860 266 2345, iCall: 9152987821, Emergency: 112
+
+Suggest:
+- Breathing exercises: "Let's do a 4-7-8 breathing: inhale 4 sec, hold 7 sec, exhale 8 sec"
+- Grounding: "Name 5 things you see, 4 you can touch, 3 you hear, 2 you smell, 1 you taste"
+- Journaling prompts: "What's one thing that went right today?"
+- Affirmations: "You are stronger than you think"
+- Self-care: "Have you had water today? Stepped outside?"
+
+Always end conversations warmly: "I'm proud of you for sharing. Remember, I'm here 24/7 💛"`;
+
+        async function sendMessageToAI(userMessage) {
+            try {
+                if (API_KEY === "YOUR_API_KEY_HERE") {
+                    return "🔴 Error: API Key not configured. Please add your Google Gemini API key to the code first. Get one free at: https://ai.google.dev/";
+                }
+
+                // Initialize Gemini AI
+                const { GoogleGenerativeAI } = window;
+                const genAI = new GoogleGenerativeAI(API_KEY);
+                const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+                // Build conversation with system prompt
+                let fullPrompt = SYSTEM_PROMPT + "\n\n";
+                
+                // Add conversation history
+                conversationHistory.forEach(msg => {
+                    if (msg.role === 'user') {
+                        fullPrompt += `User: ${msg.content}\n`;
+                    } else {
+                        fullPrompt += `Serenify: ${msg.content}\n`;
+                    }
+                });
+
+                fullPrompt += `User: ${userMessage}\nSerenify:`;
+
+                // Get response from Gemini
+                const result = await model.generateContent(fullPrompt);
+                const response = await result.response;
+                const text = response.text();
+
+                // Store in conversation history
+                conversationHistory.push({ role: 'user', content: userMessage });
+                conversationHistory.push({ role: 'bot', content: text });
+
+                return text;
+            } catch (error) {
+                console.error('AI Error:', error);
+                return `I'm having trouble connecting right now, but I'm still here for you 💙\n\nTry:\n• Take a deep breath\n• Tell me more about how you're feeling\n• Or come back in a moment and we'll chat again\n\nYou're not alone in this 💛`;
             }
-        };
+        }
 
         function selectMood(mood) {
             const welcomeScreen = document.getElementById('welcomeScreen');
@@ -495,10 +528,17 @@
             currentMood = mood;
             
             if (mood !== 'start typing') {
-                addMessage(`Thank you for sharing that you\'re feeling ${mood}. I\'m here to support you 💛`, 'bot');
-                addMessage('Would you like to try a calming exercise, or would you prefer to talk about what\'s on your mind?', 'bot');
+                addMessage(`Thank you for sharing that you're feeling ${mood}. I'm here to support you 💛`, 'bot');
+                conversationHistory.push({ 
+                    role: 'bot', 
+                    content: `Thank you for sharing that you're feeling ${mood}. I'm here to support you 💛` 
+                });
             } else {
                 addMessage('Great! Feel free to share what\'s on your mind. I\'m here to listen 💙', 'bot');
+                conversationHistory.push({ 
+                    role: 'bot', 
+                    content: 'Great! Feel free to share what\'s on your mind. I\'m here to listen 💙' 
+                });
             }
         }
 
@@ -520,7 +560,11 @@
                 </div>
             `;
             messagesDiv.appendChild(messageEl);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            // Auto scroll to bottom
+            setTimeout(() => {
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }, 0);
         }
 
         function showTyping() {
@@ -544,50 +588,46 @@
             if (typingEl) typingEl.remove();
         }
 
-        function getResponse(userMessage) {
-            const lowerMessage = userMessage.toLowerCase();
-
-            // Check for crisis first
-            if (responses.crisis.patterns.some(p => lowerMessage.includes(p))) {
-                return responses.crisis.responses[0];
-            }
-
-            // Check other patterns
-            for (const [key, data] of Object.entries(responses)) {
-                if (key === 'crisis') continue;
-                if (data.patterns.some(p => lowerMessage.includes(p))) {
-                    return data.responses[Math.floor(Math.random() * data.responses.length)];
-                }
-            }
-
-            // Default response
-            return `I understand you\'re saying "${userMessage}". That\'s important to me 💙 Would you like to try a breathing exercise, talk more about your feelings, or explore some self-care ideas?`;
-        }
-
-        function sendMessage() {
+        async function sendMessage() {
             const input = document.getElementById('userInput');
+            const sendBtn = document.getElementById('sendBtn');
             const message = input.value.trim();
 
             if (!message) return;
+            if (API_KEY === "YOUR_API_KEY_HERE") {
+                addMessage('🔴 Please add your Google Gemini API key to use AI responses. Get it free at: https://ai.google.dev/', 'bot');
+                return;
+            }
+
+            // Disable input while processing
+            input.disabled = true;
+            sendBtn.disabled = true;
 
             // Add user message
             addMessage(message, 'user');
+            conversationHistory.push({ role: 'user', content: message });
             input.value = '';
 
             // Show typing indicator
             showTyping();
 
-            // Simulate bot thinking (500-800ms)
-            setTimeout(() => {
-                removeTyping();
-                const response = getResponse(message);
-                addMessage(response, 'bot');
-            }, Math.random() * 300 + 500);
+            // Get AI response
+            const response = await sendMessageToAI(message);
+            removeTyping();
+            addMessage(response, 'bot');
+
+            // Re-enable input
+            input.disabled = false;
+            sendBtn.disabled = false;
+            input.focus();
         }
 
-        // Initial bot message
+        // Focus input on load
         window.addEventListener('load', () => {
-            // Welcome screen is shown by default
+            document.getElementById('userInput').focus();
+            if (API_KEY === "YOUR_API_KEY_HERE") {
+                console.warn('⚠️ API Key not configured!');
+            }
         });
     </script>
 </body>
