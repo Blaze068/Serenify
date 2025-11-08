@@ -87,6 +87,9 @@
             outline: none;
             border-color: #7B68EE;
         }
+        .input-field:disabled {
+            background: #f5f5f5;
+        }
         .send-btn {
             padding: 10px 20px;
             background: #7B68EE;
@@ -97,6 +100,7 @@
             font-weight: bold;
         }
         .send-btn:hover { background: #6A5FDB; }
+        .send-btn:disabled { background: #ccc; cursor: not-allowed; }
         .welcome {
             flex: 1;
             display: flex;
@@ -110,6 +114,17 @@
         .welcome-icon { font-size: 60px; margin-bottom: 20px; }
         .welcome h2 { margin-bottom: 15px; color: #333; }
         .welcome p { margin-bottom: 20px; color: #666; font-size: 14px; }
+        .api-setup { 
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px;
+            font-size: 12px;
+            color: #856404;
+            text-align: left;
+        }
+        .api-setup strong { display: block; margin-bottom: 10px; }
         .mood-btns {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -156,13 +171,23 @@
     <div class="container">
         <div class="header">
             <h1>🩵 Serenify</h1>
-            <p>Your Mental Wellness Companion</p>
+            <p>Your Mental Wellness Companion (AI Powered)</p>
         </div>
 
         <div id="welcome" class="welcome messages">
             <div class="welcome-icon">🩵</div>
             <h2>Hi there, I'm Serenify 💛</h2>
-            <p>Your mental wellness companion. Talk to me about anything - stress, anxiety, or how your day's been. I'm here 24/7 to listen and support you.</p>
+            <p>Your AI-powered mental wellness companion. I'm here 24/7 to listen, support, and help you through stress, anxiety, loneliness, and more.</p>
+            
+            <div class="api-setup">
+                <strong>⚙️ AI Setup:</strong>
+                To enable AI responses, you need to add your Google Gemini API key to the code:<br><br>
+                1. Get free key: <strong>https://ai.google.dev/</strong><br>
+                2. Find: <strong>const GEMINI_API_KEY = ""</strong><br>
+                3. Paste your key inside the quotes<br><br>
+                Without it, you'll get limited responses.
+            </div>
+
             <div class="mood-btns">
                 <button class="mood-btn" onclick="startChat('😊 Good')">😊 Good</button>
                 <button class="mood-btn" onclick="startChat('😐 Okay')">😐 Okay</button>
@@ -177,124 +202,75 @@
 
         <div class="input-area">
             <input type="text" class="input-field" id="userInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()">
-            <button class="send-btn" onclick="sendMessage()">Send</button>
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai"></script>
     <script>
-        const keywords = {
-            // Greetings
-            hello: ["Hello! How can I help you today? 💛", "Hi there! I'm here to listen 💙", "Hey! What's on your mind?"],
-            hi: ["Hi! I'm Serenify, here for you 💙", "Hello! Talk to me 💛"],
-            hey: ["Hey there! I'm listening 💛"],
-            
-            // Stress & Anxiety
-            stress: ["That sounds stressful 💙 You're not alone. Would a breathing exercise help?", "Stress is real. Let's work through this together. Want to try some relaxation techniques?", "I hear you. Take a breath - you've got this 💛"],
-            anxiety: ["Anxiety can be overwhelming. You're brave for facing it 💙 Want to ground yourself?", "That anxiety sounds tough. I'm here with you. Let's try calming your mind 🌿", "Anxiety is common. You're not alone 💛 Deep breath - you're safe"],
-            anxious: ["Feeling anxious? That's okay. Let's calm your mind together 🌿", "Anxiety doesn't define you. You're stronger than this 💙"],
-            panic: ["Panic attacks are scary but temporary. You're safe 💙 Let's breathe together", "Panic is your body trying to protect you. Let's soothe it 🌿"],
-            worried: ["Worry shows you care. But you don't have to carry it alone 💛", "Worries are heavy. Let's lighten the load 🌿"],
-            nervous: ["Nervousness is normal! It means you care 💛 Want calming tips?"],
-            
-            // Sadness & Loneliness
-            sad: ["I'm sorry you're feeling this way 💔 I'm here with you. Want to talk?", "Sadness is valid. Your feelings matter 💙 I'm listening", "It's okay to feel sad. Let's work through this together 💛"],
-            sadness: ["Sadness shows you're human. I'm here for you 💙"],
-            lonely: ["Loneliness hurts, but you're not alone - I'm here 💙", "Feeling lonely? You matter, and I care about you 💛", "Loneliness is hard. Let's connect 🤝 What's on your mind?"],
-            alone: ["You're not alone. I'm here 💙 Talk to me"],
-            depressed: ["Depression is real and hard. You're brave 💙 I'm with you", "Feeling depressed? That's tough. But there's hope 💛"],
-            depression: ["Depression lies to you. You matter 💛 Want to talk?"],
-            down: ["Down days happen. This feeling will pass 💙", "Feeling down? That's okay. I'm here 💛"],
-            unhappy: ["Your happiness matters 💛 Let's find moments of joy"],
-            
-            // Tiredness & Burnout
-            tired: ["You deserve rest 😌 Take a break. You've earned it 💛", "Tiredness is a sign you need care. Rest well 🌿", "Being tired is okay. Self-care isn't selfish 💙"],
-            exhausted: ["Exhaustion is real. Please rest 😴 You matter 💛", "You're doing too much. Rest is not lazy - it's necessary 🌿"],
-            burnout: ["Burnout means you've given too much. Time to recharge 💙", "Burnout is hard but fixable. Let's slow down together 🌿"],
-            drained: ["You sound drained. That's okay. Rest, recharge, heal 💛"],
-            
-            // Anger & Frustration
-            angry: ["Anger is valid. Let's understand what's causing it 💙", "It's okay to be angry. I'm here to listen 💛"],
-            frustrated: ["Frustration means something matters to you 💙 What's happening?", "Frustration is normal. Let's work through this 💛"],
-            angry: ["Anger is a real emotion. You're allowed to feel it 💙"],
-            mad: ["It's okay to be upset. What happened? 💛"],
-            
-            // Academic/Work Stress
-            exam: ["Exam stress is SO real 📚 You've prepared more than you think! Want calming tips?", "Exams are stressful! Remember: you're more capable than you believe 💛", "Test anxiety? That's normal. Breathing helps - try 4-7-8 exercise 🌿"],
-            exam: ["College is tough. You're doing better than you think 💙"],
-            study: ["Study stress is real. Take breaks! You need rest too 💛", "Overwhelmed by studying? Step back. Your health matters more 💙"],
-            project: ["Projects can feel overwhelming. Break it into tiny steps 💛", "Project stress? You've got this! One step at a time 💙"],
-            work: ["Work stress is common. Don't let it consume you 💛", "Work pressure getting to you? Remember - you're more than your job 💙"],
-            deadline: ["Deadlines are scary but manageable 💙 You've done this before!"],
-            
-            // Breathing & Relaxation
-            breathe: ["Let's breathe together 🌿\n\n👉 Inhale for 4 seconds\n👉 Hold for 3 seconds\n👉 Exhale for 5 seconds\n\nRepeat 3 times. You're doing great! 💛"],
-            breathing: ["Breathing exercise coming up 🌿\n\nSlow, deep breaths:\n1. In for 4... 2. Hold for 3... 3. Out for 5...\n\nDo this 3 times. Feel better? 💛"],
-            breathe: ["Breathing helps everything 🌿 Try this:\nIn (4) - Hold (3) - Out (5)\nRepeat slowly. You've got this 💙"],
-            relax: ["Let's relax together 🌿 Close your eyes if you can. Breathe slowly. I'm here 💛"],
-            calm: ["Calm mind exercise:\n\n1. Notice 5 things you SEE\n2. Notice 4 things you TOUCH\n3. Notice 3 things you HEAR\n4. Notice 2 things you SMELL\n5. Notice 1 thing you TASTE\n\nDo this slowly 🌿 Feel grounded? 💛"],
-            exercise: ["Movement helps! 💪 Try:\n• 5-min walk 🚶\n• Stretch 🧘\n• Dance to a song 🎵\n• Jump around 🤸\n\nMotion = emotion 💛"],
-            
-            // Journaling
-            journal: ["Journaling is therapeutic 📝\n\nTry writing:\n• What went right today?\n• What are 3 things you're grateful for?\n• How do you REALLY feel?\n• What would you tell a friend?\n\nTake your time 💛"],
-            write: ["Writing helps! 📝 Journal about:\n• Your feelings\n• Your day\n• Your dreams\n• Your worries\n\nNo judgment - just your truth 💛"],
-            reflect: ["Reflection is powerful 💙\n\nAsk yourself:\n• What made me smile today?\n• What am I proud of?\n• What do I need?\n• What can I let go of?\n\nThink freely 💛"],
-            
-            // Affirmations
-            affirmation: ["You are AMAZING 💪\n\n✨ You are stronger than you think\n✨ Your feelings are valid\n✨ You deserve kindness\n✨ You are enough\n✨ Tomorrow is a new day 💛"],
-            motivation: ["You've got this! 🌟\n\n• You've overcome harder things\n• You are capable\n• Progress > perfection\n• Small steps count\n• You matter 💛"],
-            inspire: ["You inspire me! 💫\n\n• Your strength is real\n• Your effort counts\n• You're doing better than you think\n• Keep going 💛"],
-            positive: ["Positivity boost! ✨\n\n💛 You are worthy\n💙 You are enough\n💚 You are loved\n🧡 You are capable\n💜 You matter"],
-            
-            // Self-Care
-            help: ["I'm here for you! 💙\n\nYou can ask me about:\n• Breathing exercises 🌿\n• Calming techniques\n• Journaling prompts 📝\n• Affirmations 💛\n• Just to listen 👂\n\nWhat do you need?"],
-            care: ["Self-care ideas 💛\n\n✨ Drink water\n✨ Take a break\n✨ Step outside 🌿\n✨ Listen to music 🎵\n✨ Rest guilt-free\n✨ Be kind to yourself\n\nYou deserve it! 💙"],
-            sleep: ["Good sleep is healing 😴\n\nTips:\n• No screens 1 hour before bed\n• Cool, dark room\n• Deep breathing\n• Comfortable position\n• Think happy thoughts 💛\n\nSleep well! 💙"],
-            water: ["Hydration matters! 💧\n\n• Your brain needs water\n• It helps mood\n• Drink regularly\n• Your body will thank you 💛"],
-            move: ["Moving helps! 💪\n\n• Quick walk ✅\n• Stretch ✅\n• Dance ✅\n• Yoga ✅\n• Play ✅\n\nGet moving! 💛"],
-            
-            // Gratitude
-            grateful: ["Gratitude is powerful! 🙏\n\n3 things you're grateful for today:\n1. ?\n2. ?\n3. ?\n\nEven small things count 💛"],
-            thank: ["You're welcome! Anything else? 💛", "Happy to help! 💙 I'm here 24/7"],
-            thanks: ["My pleasure! 💛 How else can I support you?"],
-            appreciate: ["I appreciate you too! 💙 You matter 💛"],
-            
-            // Connection
-            goodbye: ["See you later! Remember I'm here 24/7 💛", "Bye! Take care of yourself 💙 Come back anytime"],
-            bye: ["Goodbye! You've got this 💛"],
-            see: ["See you soon! Be kind to yourself 💙"],
-            love: ["Love yourself too! 💛 You deserve it"],
-            
-            // General Support
-            help: ["I'm here for you! 💙 What do you need?"],
-            feeling: ["Talk to me. I'm listening 💙 What are you feeling?"],
-            feel: ["Your feelings matter 💛 Tell me more"],
-            support: ["I've got you! 💙 What can I do?"],
-            talk: ["I'm all ears! 👂 Talk to me 💛"],
-            listen: ["I'm listening 💙 Go on..."],
-            friend: ["I'm here as your friend 💛 What's up?"],
-            need: ["You matter 💙 What do you need?"],
-            okay: ["How are you really doing? 💙", "Are you truly okay? I'm here 💛"],
-            real: ["Be real with me 💙 I'm here to listen"],
+        // ⭐ ADD YOUR GOOGLE GEMINI API KEY HERE ⭐
+        const GEMINI_API_KEY = "AIzaSyBMovICsGlAexYvUebISXGumwlNiCjztoQ"; // Leave empty to use fallback responses
+
+        let useAI = GEMINI_API_KEY.length > 0;
+        let genAI = null;
+        let model = null;
+
+        if (useAI) {
+            try {
+                genAI = new google.generativeai.GoogleGenerativeAI(GEMINI_API_KEY);
+                model = genAI.getGenerativeModel({ model: "gemini-pro" });
+            } catch (e) {
+                useAI = false;
+                console.warn("AI setup issue, using fallback");
+            }
+        }
+
+        // Fallback responses
+        const fallbackKeywords = {
+            hello: ["Hello! How can I help you today? 💛", "Hi there! I'm here to listen 💙"],
+            stress: ["That sounds stressful 💙 Want a breathing exercise?", "Stress is real. Let's work through this 💛"],
+            anxiety: ["Anxiety is tough. You're brave 💙 Want to ground yourself?"],
+            sad: ["I'm sorry you're feeling this way 💔 I'm here with you 💙"],
+            lonely: ["Loneliness hurts, but you're not alone 💙 I'm here"],
+            tired: ["You deserve rest 😌 Take a break - you've earned it 💛"],
+            help: ["I'm here for you! 💙 You can ask about:\n• Breathing exercises\n• Calming techniques\n• Journaling prompts\n• Just to listen"],
+            breathing: ["Let's breathe together 🌿\n\n1. Inhale for 4 seconds\n2. Hold for 3 seconds\n3. Exhale for 5 seconds\n\nRepeat 3 times 💛"],
+            thank: ["You're welcome! 💛 Anything else?"],
+            bye: ["Goodbye! Remember, I'm here 24/7 💛"],
         };
 
-        function getResponse(text) {
+        async function getAIResponse(userMessage) {
+            if (!useAI || !model) return null;
+
+            try {
+                const systemPrompt = `You are Serenify, a compassionate mental wellness chatbot. Respond warmly like a caring friend. Use emojis naturally. Keep responses concise. If someone mentions self-harm or suicide, share India crisis helplines: AASRA (91-9820466726), Vandrevala (1860 266 2345), iCall (9152987821), Emergency (112). Never pretend to be a doctor.`;
+                
+                const fullPrompt = systemPrompt + "\n\nUser: " + userMessage + "\n\nSerenify:";
+                
+                const result = await model.generateContent(fullPrompt);
+                const response = await result.response;
+                return response.text();
+            } catch (error) {
+                console.error("AI Error:", error);
+                return null;
+            }
+        }
+
+        function getFallbackResponse(text) {
             const lower = text.toLowerCase();
             
-            // Crisis check - highest priority
-            if (["suicide", "kill myself", "self harm", "cut", "die", "end it", "no point", "better off dead"].some(w => lower.includes(w))) {
-                return "🚨 I'm so sorry you're feeling this way 💙\n\n🇮🇳 CRISIS HELPLINES (India):\n• AASRA: 91-9820466726\n• Vandrevala: 1860 266 2345\n• iCall: 9152987821\n• iCall Chat: www.icallhelpline.org\n• Emergency: 112\n\n🌍 Other countries:\n• US: 988 (Suicide Lifeline)\n• UK: 116 123 (Samaritans)\n• Australia: 13 11 14 (Lifeline)\n\nYour life matters. Please reach out. I'm here too 💛";
+            // Crisis check
+            if (["suicide", "kill", "self harm", "die", "end it"].some(w => lower.includes(w))) {
+                return "🚨 I'm so sorry you're feeling this way 💙\n\n🇮🇳 CRISIS HELPLINES:\n• AASRA: 91-9820466726\n• Vandrevala: 1860 266 2345\n• iCall: 9152987821\n• Emergency: 112\n\nYour life matters. Please reach out 💛";
             }
             
-            // Check all keywords
-            for (const [key, responses] of Object.entries(keywords)) {
+            for (const [key, responses] of Object.entries(fallbackKeywords)) {
                 if (lower.includes(key)) {
-                    const response = Array.isArray(responses) ? responses[Math.floor(Math.random() * responses.length)] : responses;
-                    return response;
+                    return responses[Math.floor(Math.random() * responses.length)];
                 }
             }
             
-            // Fallback response
-            return "I hear you 💙 That's important. I might not have a specific response, but know that:\n\n✨ Your feelings are valid\n✨ You're not alone\n✨ I'm here to listen\n\nTell me more about what you're feeling 💛";
+            return "I hear you 💙 Your feelings matter. Tell me more about what you're experiencing 💛";
         }
 
         function startChat(mood) {
@@ -332,22 +308,39 @@
             if (typing) typing.remove();
         }
 
-        function sendMessage() {
+        async function sendMessage() {
             const input = document.getElementById('userInput');
+            const sendBtn = document.getElementById('sendBtn');
             const text = input.value.trim();
             
             if (!text) return;
             
+            input.disabled = true;
+            sendBtn.disabled = true;
+            
             addMessage(text, 'user');
             input.value = '';
-            input.focus();
             
             showTyping();
             
-            setTimeout(() => {
-                removeTyping();
-                addMessage(getResponse(text), 'bot');
-            }, 400);
+            let response;
+            
+            if (useAI) {
+                // Try AI first
+                response = await getAIResponse(text);
+            }
+            
+            // Fallback if AI fails or not enabled
+            if (!response) {
+                response = getFallbackResponse(text);
+            }
+            
+            removeTyping();
+            addMessage(response, 'bot');
+            
+            input.disabled = false;
+            sendBtn.disabled = false;
+            input.focus();
         }
 
         document.getElementById('userInput').focus();
