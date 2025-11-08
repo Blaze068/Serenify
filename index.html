@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serenify - Mental Wellness Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #7B68EE;
+            --secondary-color: #87CEEB;
+            --accent-color: #E8F4F8;
+            --light-purple: #E6E6FA;
+            --dark-text: #2C3E50;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #F0E6FA 0%, #E3F2FD 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            height: 90vh;
+            max-height: 700px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #7B68EE 0%, #87CEEB 100%);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header p {
+            font-size: 13px;
+            opacity: 0.95;
+            margin: 5px 0;
+        }
+
+        .status {
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+            flex: 1;
+            background: linear-gradient(135deg, #F0E6FA 0%, #E3F2FD 100%);
+        }
+
+        .welcome-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .welcome-screen h2 {
+            font-size: 28px;
+            color: var(--dark-text);
+            margin-bottom: 10px;
+        }
+
+        .welcome-screen p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .mood-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        .mood-btn {
+            padding: 12px 8px;
+            background: var(--accent-color);
+            border: 2px solid #DDD;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--dark-text);
+            transition: all 0.3s ease;
+        }
+
+        .mood-btn:hover {
+            border-color: var(--primary-color);
+            background: var(--light-purple);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(123, 104, 238, 0.3);
+        }
+
+        /* Chat Area */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.user .message-bubble {
+            background: #7CB9E8;
+            color: var(--white);
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.bot .message-bubble {
+            background: var(--light-purple);
+            color: var(--dark-text);
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+
+        .typing {
+            display: flex;
+            gap: 4px;
+            padding: 10px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+            30% { opacity: 1; transform: translateY(-10px); }
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 15px;
+            border-top: 1px solid #EEE;
+            display: flex;
+            gap: 10px;
+            background: var(--white);
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #DDD;
+            border-radius: 25px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.1);
+        }
+
+        .send-btn {
+            padding: 12px 20px;
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .send-btn:hover {
+            background: #6A5FDB;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(123, 104, 238, 0.4);
+        }
+
+        .send-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            padding: 0 20px 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            background: var(--accent-color);
+            border: 2px solid #DDD;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-color);
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: var(--light-purple);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            .container {
+                max-height: 100vh;
+                border-radius: 0;
+            }
+
+            .message-bubble {
+                max-width: 85%;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .mood-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Scrollbar Styling */
+        .messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .messages::-webkit-scrollbar-thumb {
+            background: #DDD;
+            border-radius: 3px;
+        }
+
+        .messages::-webkit-scrollbar-thumb:hover {
+            background: #AAA;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🩵 Serenify</h1>
+            <p>Your Mental Wellness Companion</p>
+            <div class="status">
+                <div class="status-dot"></div>
+                <span>Always here for you 💛</span>
+            </div>
+        </div>
+
+        <!-- Welcome Screen (initially visible) -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <div class="welcome-icon">🩵</div>
+            <h2>Hi there, I'm Serenify 💛</h2>
+            <p>Your mental wellness companion. You can talk to me about anything that's on your mind — stress, anxiety, overthinking, or just how your day's been.</p>
+            <p style="font-size: 14px; color: #888;">I'm here 24/7 to listen, calm, and support you</p>
+            <div style="margin-top: 20px; font-weight: 600; color: #666; margin-bottom: 20px;">So, how are you feeling today?</div>
+            <div class="mood-buttons">
+                <button class="mood-btn" onclick="selectMood('😊 Good')">😊 Good</button>
+                <button class="mood-btn" onclick="selectMood('😐 Okay')">😐 Okay</button>
+                <button class="mood-btn" onclick="selectMood('😔 Not great')">😔 Not great</button>
+                <button class="mood-btn" onclick="selectMood('😰 Stressed')">😰 Stressed</button>
+                <button class="mood-btn" onclick="selectMood('💭 Thinking')">💭 Thinking</button>
+                <button class="mood-btn" onclick="selectMood('start typing')">💬 Just chat</button>
+            </div>
+        </div>
+
+        <!-- Chat Area (initially hidden) -->
+        <div class="chat-container" id="chatContainer" style="display: none;">
+            <div class="messages" id="messages"></div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <input 
+                type="text" 
+                class="input-field" 
+                id="userInput" 
+                placeholder="Type your message..."
+                onkeypress="if(event.key === 'Enter') sendMessage()"
+            >
+            <button class="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Serenify Chatbot Logic
+        let messages = [];
+        let currentMood = null;
+
+        const responses = {
+            greetings: {
+                patterns: ['hi', 'hello', 'hey', 'greetings', 'good morning', 'good afternoon', 'good evening'],
+                responses: [
+                    'Hello! How can I assist you today? 💛',
+                    'Hi there! What can I help you with?',
+                    'Hey! I\'m here to help. What do you need?'
+                ]
+            },
+            stressed: {
+                patterns: ['stress', 'stressed', 'pressure', 'overwhelm', 'overwhelmed', 'anxious', 'anxiety', 'worried', 'nervous'],
+                responses: [
+                    'That sounds really stressful 💙 You\'re not alone — many people feel overwhelmed sometimes. Would you like to try a calming breathing exercise?',
+                    'Stress can feel so heavy. Your feelings are completely valid. I\'m here with you 💛'
+                ]
+            },
+            sad: {
+                patterns: ['sad', 'depressed', 'down', 'unhappy', 'miserable', 'lonely', 'alone'],
+                responses: [
+                    'I\'m sorry you\'re feeling this way 💔 It\'s okay to not be okay. I\'m here with you. Would you like to talk about it?',
+                    'Loneliness can hurt so much 💙 Please know that your feelings matter. I\'m here, and I care.'
+                ]
+            },
+            breathing: {
+                patterns: ['breath', 'breathing', 'relax', 'calm', 'exercise', 'exercise'],
+                responses: [
+                    'Let\'s do a calming breathing exercise together 🌿\n\n👉 Breathe in slowly for 4 seconds...\n👉 Hold for 3 seconds...\n👉 Breathe out gently for 5 seconds...\n\nLet\'s repeat this 3 times. Take your time. I\'m here with you 💛\n\nHow do you feel now?'
+                ]
+            },
+            journaling: {
+                patterns: ['journal', 'write', 'reflect', 'thought'],
+                responses: [
+                    'Journaling can be really therapeutic 📝 Here are some prompts:\n\n• What\'s something small that went right today?\n• What are three things you\'re grateful for?\n• If you could tell yourself one thing, what would it be?\n\nTake your time. Writing helps 💛'
+                ]
+            },
+            affirmation: {
+                patterns: ['affirmation', 'motivation', 'encouragement', 'positive'],
+                responses: [
+                    'You are stronger than you think 💪',
+                    'It\'s okay to not be okay. You\'re doing your best 💛',
+                    'Your feelings are valid, and you deserve support 🩵',
+                    'One step at a time. You\'ve got this 🌟',
+                    'You are worthy of love, rest, and kindness 💚'
+                ]
+            },
+            selfcare: {
+                patterns: ['tired', 'exhausted', 'burnout', 'drained', 'help', 'support', 'care'],
+                responses: [
+                    'You deserve rest 😌 Here are some gentle self-care ideas:\n\n• Take a 5-minute stretch break 🧘\n• Drink some water 💧\n• Step outside for fresh air 🌿\n• Listen to calming music 🎵\n• Rest guilt-free\n\nYou\'ve been doing great. Take care of yourself 💛'
+                ]
+            },
+            thank: {
+                patterns: ['thank', 'thanks', 'appreciate', 'grateful'],
+                responses: [
+                    'You\'re welcome! Is there anything else I can help with? 💛',
+                    'Happy to help! Let me know if you need anything else 💙'
+                ]
+            },
+            goodbye: {
+                patterns: ['bye', 'goodbye', 'see you', 'farewell'],
+                responses: [
+                    'Goodbye! Feel free to come back anytime you need me 💛',
+                    'See you later! Remember, I\'m here 24/7 whenever you need support 🩵'
+                ]
+            },
+            crisis: {
+                patterns: ['suicide', 'kill myself', 'self harm', 'cut myself', 'want to die', 'end it all', 'no point', 'better off dead'],
+                responses: [
+                    '🚨 I\'m really sorry you\'re feeling like this 💙\n\nYou\'re not alone — help is available 24/7:\n\n🇮🇳 INDIA HELPLINES:\n• AASRA: 91-9820466726\n• Vandrevala: 1860 266 2345\n• iCall: 9152987821\n• National: 112\n\nPlease reach out to someone you trust or call one of these numbers. Your life matters 🩵\n\nI\'m here, but trained professionals can help right now.'
+                ]
+            }
+        };
+
+        function selectMood(mood) {
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            const chatContainer = document.getElementById('chatContainer');
+            welcomeScreen.style.display = 'none';
+            chatContainer.style.display = 'flex';
+
+            currentMood = mood;
+            
+            if (mood !== 'start typing') {
+                addMessage(`Thank you for sharing that you\'re feeling ${mood}. I\'m here to support you 💛`, 'bot');
+                addMessage('Would you like to try a calming exercise, or would you prefer to talk about what\'s on your mind?', 'bot');
+            } else {
+                addMessage('Great! Feel free to share what\'s on your mind. I\'m here to listen 💙', 'bot');
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messagesDiv = document.getElementById('messages');
+            const messageObj = {
+                text,
+                sender,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            messages.push(messageObj);
+
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${sender}`;
+            messageEl.innerHTML = `
+                <div>
+                    <div class="message-bubble">${text}</div>
+                    <div class="message-time">${messageObj.time}</div>
+                </div>
+            `;
+            messagesDiv.appendChild(messageEl);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function showTyping() {
+            const messagesDiv = document.getElementById('messages');
+            const typingEl = document.createElement('div');
+            typingEl.className = 'message bot';
+            typingEl.id = 'typing-indicator';
+            typingEl.innerHTML = `
+                <div class="typing">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            messagesDiv.appendChild(typingEl);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function removeTyping() {
+            const typingEl = document.getElementById('typing-indicator');
+            if (typingEl) typingEl.remove();
+        }
+
+        function getResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+
+            // Check for crisis first
+            if (responses.crisis.patterns.some(p => lowerMessage.includes(p))) {
+                return responses.crisis.responses[0];
+            }
+
+            // Check other patterns
+            for (const [key, data] of Object.entries(responses)) {
+                if (key === 'crisis') continue;
+                if (data.patterns.some(p => lowerMessage.includes(p))) {
+                    return data.responses[Math.floor(Math.random() * data.responses.length)];
+                }
+            }
+
+            // Default response
+            return `I understand you\'re saying "${userMessage}". That\'s important to me 💙 Would you like to try a breathing exercise, talk more about your feelings, or explore some self-care ideas?`;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Show typing indicator
+            showTyping();
+
+            // Simulate bot thinking (500-800ms)
+            setTimeout(() => {
+                removeTyping();
+                const response = getResponse(message);
+                addMessage(response, 'bot');
+            }, Math.random() * 300 + 500);
+        }
+
+        // Initial bot message
+        window.addEventListener('load', () => {
+            // Welcome screen is shown by default
+        });
+    </script>
+</body>
+</html>
